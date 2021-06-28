@@ -1,0 +1,9 @@
+{
+  "PORT": 5432,
+  "HOST": "localhost",
+  "DB": "postgres",
+  "USER": "postgres",
+  "PASSWORD": "123456",
+  "BODY_LIMIT": 10485760,
+  "CSRF_SECRET": "for93f;a03ag"
+}
