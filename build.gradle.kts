@@ -34,7 +34,7 @@ dependencies {
   implementation("io.vertx:vertx-config")
   implementation("io.vertx:vertx-auth-jwt")
   implementation("io.vertx:vertx-web")
-  implementation("io.vertx:vertx-pg-client")
+  implementation("io.vertx:vertx-mongo-client")
   implementation("io.vertx:vertx-lang-kotlin-coroutines")
   implementation("io.vertx:vertx-lang-kotlin")
 

@@ -19,8 +19,6 @@ class MainVerticle : CoroutineVerticle() {
   override suspend fun start() {
     vertx.exceptionHandler { e ->
       logger.error("unhandledThrowable: ${e.message}", e.cause)
-      //做一些其他操作 尝试重启 同步状态 redis 集群通信等等
-      // 发邮件通知崩溃事件
 
       // 以非0状态码退出配合docker的重启策略
       exitProcess(-1)
