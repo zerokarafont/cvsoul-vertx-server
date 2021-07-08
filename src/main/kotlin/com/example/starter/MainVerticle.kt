@@ -23,7 +23,7 @@ class MainVerticle : CoroutineVerticle() {
       // 发邮件通知崩溃事件
 
       // 以非0状态码退出配合docker的重启策略
-      exitProcess(1)
+      exitProcess(-1)
     }
 
     // 全局配置
