@@ -42,7 +42,7 @@ class HTTPVerticle : CoroutineVerticle() {
         val cause = ctx.failure().cause
 
         if (statusCode == 400) {
-          logger.error("[业务异常]: $message, $cause")
+          logger.error("[业务异常]: $message", cause)
           ctx.json(
             jsonObjectOf (
               "statusCode" to statusCode,
@@ -51,7 +51,7 @@ class HTTPVerticle : CoroutineVerticle() {
             )
           )
         }else {
-          logger.error("[未知路由异常]: $message, $cause")
+          logger.error("[未知路由异常]: $message", cause)
           ctx.json(
             jsonObjectOf(
               "statusCode" to 500,
@@ -68,13 +68,12 @@ class HTTPVerticle : CoroutineVerticle() {
       vertx
         .createHttpServer()
         .requestHandler(router)
-        .listen(8000)
+        .listen(9000)
         .await()
-      println("Http server is running on port 8000")
+      logger.info("Http server is running on port 9000")
     } catch (e: Throwable) {
       val message = e.message
       val cause = Throwable(this::class.java.name)
-      logger.error(message, cause)
       throw Error(message, cause)
     }
 
