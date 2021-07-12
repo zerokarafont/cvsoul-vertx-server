@@ -7,3 +7,4 @@
 `use appdb`
 `db.createUser({user:'xxx',pwd:'xxx',roles:[{role:'dbOwner', db:'appdb'}]})`
 
+## 接口约定
