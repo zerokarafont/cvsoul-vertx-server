@@ -1,19 +1,15 @@
 package com.example.starter.verticle
 
 import com.example.starter.controller.restRoute
+import com.example.starter.middleware.SignHandler
 import io.vertx.core.impl.logging.LoggerFactory
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.*
-import io.vertx.ext.web.handler.sockjs.SockJSHandler
-import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions
 import io.vertx.json.schema.SchemaParser
 import io.vertx.json.schema.SchemaRouter
-import io.vertx.kotlin.core.http.webSocketConnectOptionsOf
-import io.vertx.kotlin.core.json.json
 import io.vertx.kotlin.core.json.jsonObjectOf
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
-import io.vertx.kotlin.ext.web.handler.sockjs.sockJSBridgeOptionsOf
 import io.vertx.kotlin.json.schema.schemaRouterOptionsOf
 
 class HTTPVerticle : CoroutineVerticle() {
@@ -36,6 +32,7 @@ class HTTPVerticle : CoroutineVerticle() {
       .handler(ResponseContentTypeHandler.create())
       .handler(ResponseTimeHandler.create())
       .handler(LoggerHandler.create())
+      .handler(SignHandler.create(vertx, config))
       .failureHandler { ctx ->
         val statusCode = ctx.statusCode()
         val message = ctx.failure().message

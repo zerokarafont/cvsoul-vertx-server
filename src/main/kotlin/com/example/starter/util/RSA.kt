@@ -32,7 +32,7 @@ object RSA {
 
     // Decrypt using privatekey
     @Throws(Exception::class)
-    fun decryptMessage(encryptedText: String?, privatekey: String): String {
+    fun decryptMessage(encryptedText: ByteArray, privatekey: String): String {
       val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
       cipher.init(Cipher.DECRYPT_MODE, loadPrivateKey(privatekey))
       return String(cipher.doFinal(Base64.getDecoder().decode(encryptedText)))

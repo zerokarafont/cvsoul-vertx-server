@@ -38,6 +38,7 @@ dependencies {
   implementation("io.vertx:vertx-lang-kotlin-coroutines")
   implementation("io.vertx:vertx-lang-kotlin")
   implementation("org.apache.logging.log4j:log4j-slf4j18-impl:2.14.1")
+  implementation("com.soywiz.korlibs.krypto:krypto-jvm:2.2.0")
 
   implementation(kotlin("stdlib-jdk8"))
   testImplementation("io.vertx:vertx-junit5")
