@@ -35,6 +35,7 @@ dependencies {
   implementation("io.vertx:vertx-auth-jwt")
   implementation("io.vertx:vertx-web")
   implementation("io.vertx:vertx-mongo-client")
+  implementation("io.vertx:vertx-redis-client")
   implementation("io.vertx:vertx-lang-kotlin-coroutines")
   implementation("io.vertx:vertx-lang-kotlin")
   implementation("org.apache.logging.log4j:log4j-slf4j18-impl:2.14.1")

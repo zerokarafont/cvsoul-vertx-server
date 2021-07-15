@@ -1,8 +1,6 @@
 package com.example.starter
 
-import com.example.starter.verticle.DBVerticle
-import com.example.starter.verticle.HTTPVerticle
-import com.example.starter.verticle.WSVerticle
+import com.example.starter.verticle.*
 import io.vertx.config.ConfigRetriever
 import io.vertx.config.ConfigRetrieverOptions
 import io.vertx.config.ConfigStoreOptions
@@ -35,6 +33,7 @@ class MainVerticle : CoroutineVerticle() {
     try {
       // 先部署数据库
       vertx.deployVerticle(DBVerticle(), DeploymentOptions().setConfig(config)).await()
+      vertx.deployVerticle(RedisVerticle(), DeploymentOptions().setConfig(config)).await()
       // 再部署http server
       vertx.deployVerticle(HTTPVerticle(), DeploymentOptions().setConfig(config)).await()
 

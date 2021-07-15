@@ -27,7 +27,7 @@ class HTTPVerticle : CoroutineVerticle() {
       .handler(CorsHandler.create())
       .handler(CSRFHandler.create(vertx, config.getString("CSRF_SECRET")))
       .handler(XFrameHandler.create(XFrameHandler.DENY))
-      .handler(CSPHandler.create().addDirective("default-src", ""))
+      .handler(CSPHandler.create().addDirective("default-src", "self"))
       .handler(BodyHandler.create().setBodyLimit(config.getLong("BODY_LIMIT")))
       .handler(ResponseContentTypeHandler.create())
       .handler(ResponseTimeHandler.create())
@@ -67,7 +67,7 @@ class HTTPVerticle : CoroutineVerticle() {
         .requestHandler(router)
         .listen(9000)
         .await()
-      logger.info("Http server is running on port 9000")
+      logger.info("HTTP客户端启动成功")
     } catch (e: Throwable) {
       val message = e.message
       val cause = Throwable(this::class.java.name)

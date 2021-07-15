@@ -1,14 +1,17 @@
 package com.example.starter.verticle
 
 import io.vertx.core.json.JsonObject
+import io.vertx.kotlin.core.json.jsonObjectOf
 import io.vertx.kotlin.coroutines.CoroutineVerticle
+import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.redis.client.psetexAwait
+import io.vertx.redis.client.RedisAPI
+import kotlinx.coroutines.launch
 
 /**
  * 缓存每次HTTP请求的nonce值
  */
-class NonceVerticle: CoroutineVerticle() {
-  // <nonce值， 存入时间>
-  private val cache = HashMap<String, Long>()
+class NonceVerticle(private val redis: RedisAPI): CoroutineVerticle() {
 
   override suspend fun start() {
     vertx.eventBus().consumer<JsonObject>(this::class.java.name) {
@@ -16,14 +19,16 @@ class NonceVerticle: CoroutineVerticle() {
       val nonce = it.body().getString("MESSAGE")
       when(action) {
         "GET" -> {
-          if (cache[nonce] == null) {
-            it.reply("")
-          }else {
-            it.reply(nonce)
+          launch {
+            val isExist = redis.exists(mutableListOf(nonce)).await()
+            it.reply(jsonObjectOf(
+              "isExist" to isExist.toBoolean()
+            ))
           }
         }
         "SET" -> {
-          cache[nonce] = System.currentTimeMillis()
+          // 过期时间60秒
+          redis.setex(nonce, config.getNumber("NONCE_MIN_EXPIRED_UNIT_SEC").toString(), "1")
         }
       }
     }
