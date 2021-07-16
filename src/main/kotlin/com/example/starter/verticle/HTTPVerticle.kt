@@ -1,6 +1,7 @@
 package com.example.starter.verticle
 
 import com.example.starter.controller.restRoute
+import com.example.starter.middleware.SSLHandler
 import com.example.starter.middleware.SignHandler
 import io.vertx.core.impl.logging.LoggerFactory
 import io.vertx.ext.web.Router
@@ -33,6 +34,7 @@ class HTTPVerticle : CoroutineVerticle() {
       .handler(ResponseTimeHandler.create())
       .handler(LoggerHandler.create())
       .handler(SignHandler.create(vertx, config))
+      .handler(SSLHandler.create(vertx, config))
       .failureHandler { ctx ->
         val statusCode = ctx.statusCode()
         val message = ctx.failure().message

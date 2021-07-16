@@ -27,7 +27,10 @@ class RedisVerticle: CoroutineVerticle() {
 
       val redis = RedisAPI.api(client)
 
-      vertx.deployVerticle(NonceVerticle(redis), DeploymentOptions().setConfig(config)).await()
+      CompositeFuture.all(
+        vertx.deployVerticle(NonceVerticle(redis), DeploymentOptions().setConfig(config)),
+        vertx.deployVerticle(SSLVerticle(redis), DeploymentOptions().setConfig(config))
+      ).await()
 
     } catch (e: Throwable) {
       val message = e.message

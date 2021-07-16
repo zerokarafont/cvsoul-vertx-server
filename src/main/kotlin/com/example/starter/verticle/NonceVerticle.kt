@@ -20,7 +20,7 @@ class NonceVerticle(private val redis: RedisAPI): CoroutineVerticle() {
       when(action) {
         "GET" -> {
           launch {
-            val isExist = redis.exists(mutableListOf(nonce)).await()
+            val isExist = redis.exists(mutableListOf("nonce:$nonce")).await()
             it.reply(jsonObjectOf(
               "isExist" to isExist.toBoolean()
             ))
@@ -28,7 +28,7 @@ class NonceVerticle(private val redis: RedisAPI): CoroutineVerticle() {
         }
         "SET" -> {
           // 过期时间60秒
-          redis.setex(nonce, config.getNumber("NONCE_MIN_EXPIRED_UNIT_SEC").toString(), "1")
+          redis.setex("nonce:$nonce", config.getNumber("NONCE_MIN_EXPIRED_UNIT_SEC").toString(), "1")
         }
       }
     }
