@@ -78,8 +78,6 @@ class SSLHandlerImpl(private val vertx: Vertx, private val config: JsonObject): 
     // 缓存sessionId
     vertx.eventBus().send(SSLVerticle::class.java.name, SET_REQUEST)
 
-    println("newSessionId: $newSessionId")
-
     return newSessionId
   }
 }

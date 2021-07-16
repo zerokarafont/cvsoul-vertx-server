@@ -4,6 +4,9 @@ import com.example.starter.controller.restRoute
 import com.example.starter.middleware.SSLHandler
 import com.example.starter.middleware.SignHandler
 import io.vertx.core.impl.logging.LoggerFactory
+import io.vertx.ext.auth.JWTOptions
+import io.vertx.ext.auth.jwt.JWTAuth
+import io.vertx.ext.auth.jwt.JWTAuthOptions
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.*
 import io.vertx.json.schema.SchemaParser
@@ -20,6 +23,8 @@ class HTTPVerticle : CoroutineVerticle() {
     val schemaParser = SchemaParser.createDraft201909SchemaParser(
       SchemaRouter.create(vertx, schemaRouterOptionsOf())
     )
+
+
     val router = Router.router(vertx)
 
     router
@@ -49,7 +54,15 @@ class HTTPVerticle : CoroutineVerticle() {
               "data" to null
             )
           )
-        }else {
+        } else if (statusCode == 401) {
+          ctx.json(
+            jsonObjectOf (
+              "statusCode" to statusCode,
+              "msg" to "请登录",
+              "data" to null
+            )
+          )
+        } else {
           logger.error("[未知路由异常]: $message", cause)
           ctx.json(
             jsonObjectOf(

@@ -1,6 +1,7 @@
 package com.example.starter.controller
 
 import com.example.starter.service.RestService
+import com.example.starter.util.JWT
 import com.example.starter.util.coroutineHandler
 import io.vertx.core.Vertx
 import io.vertx.ext.web.Router
@@ -18,6 +19,7 @@ suspend fun restRoute(vertx: Vertx, schemaParser: SchemaParser): Router {
   router
     .get("/one")
     .produces("application/json")
+    .handler(JWT.create(vertx))
     .handler(
       ValidationHandler
         .builder(schemaParser)

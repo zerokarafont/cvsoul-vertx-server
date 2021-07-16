@@ -21,7 +21,7 @@ class SSLVerticle(private val redis: RedisAPI): CoroutineVerticle() {
         "GET" -> {
           launch {
             val cacheKey = redis.get("sessionId:$sessionId").await() ?: ""
-            println("redis: sessionId: $sessionId, cacheKey: $cacheKey")
+
             it.reply(jsonObjectOf(
               "key" to cacheKey.toString()
             ))

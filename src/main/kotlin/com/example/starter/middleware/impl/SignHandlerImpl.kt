@@ -72,8 +72,6 @@ class SignHandlerImpl(private val vertx: Vertx, private val config: JsonObject):
         }
       }
 
-      println("headers: $headers")
-
       // 验证签名
       var compareSign = ""
       if (method == HttpMethod.GET) {
