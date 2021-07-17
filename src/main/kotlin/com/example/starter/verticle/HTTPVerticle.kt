@@ -1,12 +1,9 @@
 package com.example.starter.verticle
 
-import com.example.starter.controller.restRoute
+import com.example.starter.controller.common.auth
 import com.example.starter.middleware.SSLHandler
 import com.example.starter.middleware.SignHandler
 import io.vertx.core.impl.logging.LoggerFactory
-import io.vertx.ext.auth.JWTOptions
-import io.vertx.ext.auth.jwt.JWTAuth
-import io.vertx.ext.auth.jwt.JWTAuthOptions
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.*
 import io.vertx.json.schema.SchemaParser
@@ -29,12 +26,12 @@ class HTTPVerticle : CoroutineVerticle() {
 
     router
       .route()
-      .handler(HSTSHandler.create())
-      .handler(CorsHandler.create())
-      .handler(CSRFHandler.create(vertx, config.getString("CSRF_SECRET")))
+      .handler(BodyHandler.create().setBodyLimit(config.getLong("BODY_LIMIT")))
+//      .handler(CSRFHandler.create(vertx, config.getString("CSRF_SECRET")))
       .handler(XFrameHandler.create(XFrameHandler.DENY))
       .handler(CSPHandler.create().addDirective("default-src", "self"))
-      .handler(BodyHandler.create().setBodyLimit(config.getLong("BODY_LIMIT")))
+      .handler(CorsHandler.create())
+      .handler(HSTSHandler.create())
       .handler(ResponseContentTypeHandler.create())
       .handler(ResponseTimeHandler.create())
       .handler(LoggerHandler.create())
@@ -54,14 +51,6 @@ class HTTPVerticle : CoroutineVerticle() {
               "data" to null
             )
           )
-        } else if (statusCode == 401) {
-          ctx.json(
-            jsonObjectOf (
-              "statusCode" to statusCode,
-              "msg" to "请登录",
-              "data" to null
-            )
-          )
         } else {
           logger.error("[未知路由异常]: $message", cause)
           ctx.json(
@@ -74,7 +63,7 @@ class HTTPVerticle : CoroutineVerticle() {
         }
       }
 
-    router.mountSubRouter("/rest", restRoute(vertx, schemaParser))
+    router.mountSubRouter("/auth", auth(vertx, schemaParser))
 
     try {
       vertx

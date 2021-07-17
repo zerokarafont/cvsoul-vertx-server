@@ -1,7 +1,8 @@
 package com.example.starter.verticle
 
-import com.example.starter.service.RestService
+import com.example.starter.service.AuthService
 import io.vertx.core.CompositeFuture
+import io.vertx.core.DeploymentOptions
 import io.vertx.core.impl.logging.LoggerFactory
 import io.vertx.ext.mongo.MongoClient
 import io.vertx.kotlin.core.json.jsonObjectOf
@@ -28,7 +29,7 @@ class DBVerticle : CoroutineVerticle() {
 
     CompositeFuture.all(
       vertx.deployVerticle(RestService(client)),
-      vertx.deployVerticle(RestService(client)),
+      vertx.deployVerticle(AuthService(client), DeploymentOptions().setConfig(config)),
     ).await()
   }
 }

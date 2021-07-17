@@ -3,6 +3,7 @@
   "HOST": "localhost",
   "DB": "cvsoul",
   "USER": "cvsoul",
+  "SALT": "9bjlPKiLVjvVug1u",
   "PASSWORD": "123456",
   "BODY_LIMIT": 10485760,
   "CSRF_SECRET": "for93f;a03ag",
