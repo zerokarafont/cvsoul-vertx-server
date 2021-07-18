@@ -1,10 +1,11 @@
 package com.example.starter.service
 
-import com.example.starter.util.*
-import com.soywiz.krypto.AES
+import com.example.starter.util.JWT
+import com.example.starter.util.decryptData
+import com.example.starter.util.decryptKeyDirectOrFromCache
+import com.example.starter.util.encryptData
 import com.soywiz.krypto.MD5
-import com.soywiz.krypto.Padding
-import com.soywiz.krypto.encoding.Base64
+import io.vertx.core.CompositeFuture
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.mongo.MongoClient
 import io.vertx.kotlin.core.json.jsonObjectOf
@@ -23,8 +24,70 @@ class AuthService(private var client: MongoClient) : CoroutineVerticle() {
 
       when(action) {
         "LOGIN" -> launch { message.reply(login(data, sessionId, appKey)) }
+        "REGISTER" -> launch { message.reply(register(data, sessionId, appKey)) }
       }
     }
+  }
+
+  private suspend fun register(data: JsonObject, sessionId: String, appKey: String): Any {
+    val username = data.getString("username")
+    val encryptPass = data.getString("password")
+    val code = data.getString("code")
+
+    val resp = CompositeFuture.all(
+      client.findOne("user", jsonObjectOf(
+        "username" to username
+      ), jsonObjectOf(
+        "username" to 1
+      )),
+      client.findOne("code", jsonObjectOf(
+        "code" to code,
+        "isUsed" to false
+      ), jsonObjectOf()))
+      .await()
+      .result()
+      .list<JsonObject?>()
+
+    val userObj = resp[0]
+    if (userObj != null) {
+      return jsonObjectOf(
+        "statusCode" to 400,
+        "msg" to "用户名已存在"
+      )
+    }
+
+    val codeObj = resp[1]
+    if (codeObj == null) {
+      return jsonObjectOf(
+        "statusCode" to 400,
+        "msg" to "无效邀请码"
+      )
+    }
+
+    // 标志邀请码已使用
+    client.updateCollection("code", jsonObjectOf(
+      "code" to code
+    ), jsonObjectOf(
+      "\$set" to jsonObjectOf("isUsed" to true)
+    )).await()
+
+    // 解出明文密码
+    val key = decryptKeyDirectOrFromCache(vertx, sessionId, appKey, config)
+    val rawPass = decryptData<String>(encryptPass, key)
+
+    val salt = config.getString("SALT")
+    val hashPass = MD5.digest("$rawPass$salt".toByteArray()).hexUpper
+
+    client.save("user", jsonObjectOf(
+      "username" to username,
+      "password" to hashPass
+    )).await()
+
+    return jsonObjectOf(
+      "statusCode" to 200,
+      "msg" to "注册成功",
+      "data" to null
+    )
   }
 
   private suspend fun login(data: JsonObject, sessionId: String, appKey: String): Any {
