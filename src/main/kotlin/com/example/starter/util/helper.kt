@@ -4,6 +4,7 @@ import com.example.starter.verticle.SSLVerticle
 import com.soywiz.krypto.AES
 import com.soywiz.krypto.Padding
 import com.soywiz.krypto.encoding.Base64
+import com.soywiz.krypto.encoding.base64
 import io.vertx.core.Future
 import io.vertx.core.Vertx
 import io.vertx.core.json.Json
@@ -84,6 +85,13 @@ inline fun <reified T> decryptData(encryptData: String, key: ByteArray): T {
     List::class -> Json.decodeValue(data, List::class.java) as T
     else -> data as T
   }
+}
+
+/**
+ * 使用key加密明文数据
+ */
+fun encryptData(rawData: String, key: ByteArray): String {
+  return AES.encryptAes128Cbc(rawData.toByteArray(), key, Padding.PKCS7Padding).base64
 }
 
 fun RoutingContext.jsonWithExceptionHandle(result: JsonObject): Future<Void>? {

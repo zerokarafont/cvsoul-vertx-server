@@ -1,8 +1,6 @@
 package com.example.starter.service
 
-import com.example.starter.util.decryptData
-import com.example.starter.util.decryptKeyDirectOrFromCache
-import com.example.starter.util.isRequestSessionIdValid
+import com.example.starter.util.*
 import com.soywiz.krypto.AES
 import com.soywiz.krypto.MD5
 import com.soywiz.krypto.Padding
@@ -54,10 +52,15 @@ class AuthService(private var client: MongoClient) : CoroutineVerticle() {
       )
     }
 
+    // 生成jwt token
+    val jwt = JWT.create(vertx).getAuth()
+    val token = jwt!!.generateToken(jsonObjectOf("sub" to "username"))
+    val encryptToken = encryptData(token, key)
+
     return jsonObjectOf(
       "statusCode" to 200,
       "msg" to "登录成功",
-      "data" to "token"
+      "data" to encryptToken
     )
   }
 }

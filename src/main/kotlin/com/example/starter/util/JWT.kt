@@ -8,14 +8,24 @@ import io.vertx.ext.web.handler.JWTAuthHandler
 
 object JWT {
   private var handler: JWTAuthHandler? = null
+  private var jwtAuth: JWTAuth? = null
 
-  fun create(vertx: Vertx): JWTAuthHandler? {
-    if (handler == null) {
+  fun create(vertx: Vertx): JWT {
+    if (handler == null || jwtAuth == null) {
       val jwtAuthConfig = JWTAuthOptions().setJWTOptions(JWTOptions().setExpiresInMinutes(7 * 24 * 60))
       val jwt = JWTAuth.create(vertx, jwtAuthConfig)
+      jwtAuth = jwt
       handler = JWTAuthHandler.create(jwt)
     }
 
-    return handler
+    return this
+  }
+
+  fun getHandler(): JWTAuthHandler? {
+    return this.handler
+  }
+
+  fun getAuth(): JWTAuth? {
+    return this.jwtAuth
   }
 }

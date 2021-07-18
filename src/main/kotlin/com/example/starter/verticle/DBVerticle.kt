@@ -28,7 +28,7 @@ class DBVerticle : CoroutineVerticle() {
     logger.info("连接MongoDB成功")
 
     CompositeFuture.all(
-      vertx.deployVerticle(RestService(client)),
+      vertx.deployVerticle(AuthService(client), DeploymentOptions().setConfig(config)),
       vertx.deployVerticle(AuthService(client), DeploymentOptions().setConfig(config)),
     ).await()
   }
