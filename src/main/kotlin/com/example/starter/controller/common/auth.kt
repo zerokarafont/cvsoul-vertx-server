@@ -51,6 +51,7 @@ suspend fun auth(vertx: Vertx, schemaParser: SchemaParser): Router {
             objectSchema()
               .requiredProperty("username", stringSchema())
               .requiredProperty("password", stringSchema())
+              .requiredProperty("confirmPass", stringSchema())
               .requiredProperty("code", stringSchema()) // 邀请码
           )
         )

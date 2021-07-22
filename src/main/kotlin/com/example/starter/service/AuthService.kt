@@ -32,7 +32,15 @@ class AuthService(private var client: MongoClient) : CoroutineVerticle() {
   private suspend fun register(data: JsonObject, sessionId: String, appKey: String): Any {
     val username = data.getString("username")
     val encryptPass = data.getString("password")
+    val encryptConfirmPass = data.getString("confirmPass")
     val code = data.getString("code")
+
+    if (encryptPass != encryptConfirmPass) {
+      return jsonObjectOf(
+        "statusCode" to 400,
+        "msg" to "输入密码不一致"
+      )
+    }
 
     val resp = CompositeFuture.all(
       client.findOne("user", jsonObjectOf(
