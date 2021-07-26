@@ -51,10 +51,9 @@ class SignHandlerImpl(private val vertx: Vertx, private val config: JsonObject):
 
     CoroutineScope(vertx.dispatcher()).launch {
       // 拿到原始的aes密钥
-      var rawBase64Key: String = ""
       val privateKey = config.getString("PRIVATE_KEY")
       val specCode = config.getString("SPEC_CODE")
-      rawBase64Key = if (sessionId.isNullOrEmpty()) {
+      val rawBase64Key = if (sessionId.isNullOrEmpty()) {
         RSA.decryptMessage(Base64.decode(appKey), privateKey)
       } else {
         // 如果sessionId不为空, 说明会话未过期, 直接从redis中获取key, 跳过RSA解密

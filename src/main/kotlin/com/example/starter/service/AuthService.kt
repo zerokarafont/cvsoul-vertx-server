@@ -102,6 +102,19 @@ class AuthService(private var client: MongoClient) : CoroutineVerticle() {
     val username = data.getString("username")
     val encryptPass = data.getString("password")
 
+    val user = client.findOne("user", jsonObjectOf(
+      "username" to username
+    ), jsonObjectOf(
+      "username" to 1
+    )).await()
+
+    if (user == null) {
+      return jsonObjectOf(
+        "statusCode" to 400,
+        "msg" to "用户名不存在"
+      )
+    }
+
     // 解出明文密码
     val key = decryptKeyDirectOrFromCache(vertx, sessionId, appKey, config)
     val rawPass = decryptData<String>(encryptPass, key)

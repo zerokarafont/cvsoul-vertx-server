@@ -46,7 +46,7 @@ class WSVerticle : CoroutineVerticle() {
         }
         .listen(14000)
         .await()
-      println("websockets server is running on port 8001")
+      println("websockets server is running on port 14000")
     } catch (e: Throwable) {
       val message = e.message
       val cause = Throwable(this::class.java.name)

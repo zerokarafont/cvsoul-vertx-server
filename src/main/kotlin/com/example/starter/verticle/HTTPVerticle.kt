@@ -31,7 +31,7 @@ class HTTPVerticle : CoroutineVerticle() {
       .handler(XFrameHandler.create(XFrameHandler.DENY))
       .handler(CSPHandler.create().addDirective("default-src", "self"))
       .handler(CorsHandler.create())
-      .handler(HSTSHandler.create())
+//      .handler(HSTSHandler.create())
       .handler(ResponseContentTypeHandler.create())
       .handler(ResponseTimeHandler.create())
       .handler(LoggerHandler.create())
