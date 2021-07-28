@@ -21,11 +21,12 @@ object JWT {
     return this
   }
 
+  fun getAuth(): JWTAuth? {
+    return this.jwtAuth
+  }
+
   fun getHandler(): JWTAuthHandler? {
     return this.handler
   }
 
-  fun getAuth(): JWTAuth? {
-    return this.jwtAuth
-  }
 }

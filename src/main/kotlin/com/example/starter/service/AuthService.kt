@@ -13,7 +13,7 @@ import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.launch
 
-class AuthService(private var client: MongoClient) : CoroutineVerticle() {
+class AuthService(private val client: MongoClient) : CoroutineVerticle() {
 
   override suspend fun start() {
     vertx.eventBus().consumer<JsonObject>(this::class.java.name).handler { message ->
@@ -138,7 +138,7 @@ class AuthService(private var client: MongoClient) : CoroutineVerticle() {
 
     // 生成jwt token
     val jwt = JWT.create(vertx).getAuth()
-    val token = jwt!!.generateToken(jsonObjectOf("sub" to "username"))
+    val token = jwt!!.generateToken(jsonObjectOf("sub" to username))
     val encryptToken = encryptData(token, key)
 
     return jsonObjectOf(

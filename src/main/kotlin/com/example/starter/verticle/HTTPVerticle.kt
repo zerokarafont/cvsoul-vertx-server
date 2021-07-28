@@ -1,5 +1,6 @@
 package com.example.starter.verticle
 
+import com.example.starter.controller.app.userApp
 import com.example.starter.controller.common.auth
 import com.example.starter.middleware.SSLHandler
 import com.example.starter.middleware.SignHandler
@@ -20,7 +21,6 @@ class HTTPVerticle : CoroutineVerticle() {
     val schemaParser = SchemaParser.createDraft201909SchemaParser(
       SchemaRouter.create(vertx, schemaRouterOptionsOf())
     )
-
 
     val router = Router.router(vertx)
 
@@ -51,6 +51,14 @@ class HTTPVerticle : CoroutineVerticle() {
               "data" to null
             )
           )
+        } else if (statusCode == 401) {
+          ctx.json(
+            jsonObjectOf (
+              "statusCode" to statusCode,
+              "msg" to "请登录",
+              "data" to null
+            )
+          )
         } else {
           logger.error("[未知路由异常]: $message", cause)
           ctx.json(
@@ -64,6 +72,7 @@ class HTTPVerticle : CoroutineVerticle() {
       }
 
     router.mountSubRouter("/auth", auth(vertx, schemaParser))
+    router.mountSubRouter("/app/user", userApp(vertx, schemaParser))
 
     try {
       vertx

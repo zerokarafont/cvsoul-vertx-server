@@ -1,6 +1,7 @@
 package com.example.starter.verticle
 
 import com.example.starter.service.AuthService
+import com.example.starter.service.UserService
 import io.vertx.core.CompositeFuture
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.impl.logging.LoggerFactory
@@ -29,7 +30,7 @@ class DBVerticle : CoroutineVerticle() {
 
     CompositeFuture.all(
       vertx.deployVerticle(AuthService(client), DeploymentOptions().setConfig(config)),
-      vertx.deployVerticle(AuthService(client), DeploymentOptions().setConfig(config)),
+      vertx.deployVerticle(UserService(client), DeploymentOptions().setConfig(config)),
     ).await()
   }
 }
