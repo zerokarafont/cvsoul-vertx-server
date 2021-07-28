@@ -41,6 +41,7 @@ class HTTPVerticle : CoroutineVerticle() {
         val statusCode = ctx.statusCode()
         val message = ctx.failure().message
         val cause = ctx.failure().cause
+        val method = ctx.request().method().name()
 
         if (statusCode == 400) {
           logger.error("[业务异常]: $message", cause)
@@ -56,6 +57,7 @@ class HTTPVerticle : CoroutineVerticle() {
             jsonObjectOf (
               "statusCode" to statusCode,
               "msg" to "请登录",
+              "method" to method,
               "data" to null
             )
           )
