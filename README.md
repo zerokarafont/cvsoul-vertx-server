@@ -15,6 +15,16 @@
   + [perform two phase commits](https://www.docs4dev.com/docs/en/mongodb/v3.6/reference/tutorial-perform-two-phase-commits.html)
 
 ## 数据模型
+### code 邀请码
+```yaml
+{
+  "_id": String
+  "code": String
+  "isUsed": Boolean # 是否已经被使用
+  "createTime": Long
+  "updateTime": Long
+}
+```
 ### voice 音频
 ```yaml
 {
@@ -27,6 +37,8 @@
   "text": String # 文本内容
   "pronounce": String # 发音
   "translate": String # 翻译
+  "createTime": Long
+  "updateTime": Long
 }
 ```
 ### quote_album 语录集
@@ -39,6 +51,8 @@
   "title": String # 标题
   "desc": String # 描述
   "tags": Array<String> # 标签
+  "createTime": Long
+  "updateTime": Long
 }
 ```
 ### album_voice 语录-音频-多对多

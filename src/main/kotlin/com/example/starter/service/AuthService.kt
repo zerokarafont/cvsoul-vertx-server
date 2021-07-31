@@ -1,9 +1,6 @@
 package com.example.starter.service
 
-import com.example.starter.util.JWT
-import com.example.starter.util.decryptData
-import com.example.starter.util.decryptKeyDirectOrFromCache
-import com.example.starter.util.encryptData
+import com.example.starter.util.*
 import com.soywiz.krypto.MD5
 import io.vertx.core.CompositeFuture
 import io.vertx.core.json.JsonObject
@@ -12,6 +9,7 @@ import io.vertx.kotlin.core.json.jsonObjectOf
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.launch
+import java.util.*
 
 class AuthService(private val client: MongoClient) : CoroutineVerticle() {
 
@@ -76,7 +74,7 @@ class AuthService(private val client: MongoClient) : CoroutineVerticle() {
     client.updateCollection("code", jsonObjectOf(
       "code" to code
     ), jsonObjectOf(
-      "\$set" to jsonObjectOf("isUsed" to true)
+      "\$set" to jsonObjectOf("isUsed" to true, "updateTime" to CSTTimestamp())
     )).await()
 
     // 解出明文密码
@@ -88,7 +86,8 @@ class AuthService(private val client: MongoClient) : CoroutineVerticle() {
 
     client.save("user", jsonObjectOf(
       "username" to username,
-      "password" to hashPass
+      "password" to hashPass,
+      "createTime" to CSTTimestamp()
     )).await()
 
     return jsonObjectOf(

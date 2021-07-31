@@ -16,6 +16,8 @@ import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.util.*
 
 fun Route.coroutineHandler(requestHandler: suspend (RoutingContext) -> Unit) {
   handler { ctx ->
@@ -101,4 +103,17 @@ fun RoutingContext.jsonWithExceptionHandle(result: JsonObject): Future<Void>? {
     throw Exception(msg)
   }
   return this.json(result)
+}
+
+/**
+ * 返回UTC+8 时区 (北京标准时间)
+ * @return timestamp CST(北京标准时间)
+ */
+fun CSTTimestamp(): Long {
+  val date = Date()
+  return date.time / 1000
+//  val calendar = Calendar.getInstance()
+//  calendar.time = date
+//  calendar.set(Calendar.HOUR, Calendar.HOUR + 8)
+//  return calendar.timeInMillis / 1000
 }
