@@ -7,8 +7,6 @@ import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.launch
 
-data class CateModel(val _id: String, val name: String)
-
 class CateService(private val client: MongoClient): CoroutineVerticle() {
 
   override suspend fun start() {
