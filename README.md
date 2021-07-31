@@ -1,5 +1,5 @@
 ## 数据库配置
-`docker run --name mongo -e MONGO_INITDB_DATABASE=cvsoul -e MONGO_INITDB_ROOT_USERNAME=mongoadmin -e MONGO_INITDB_ROOT_PASSWORD=xxxxxx -p 3306:27017 -d mongo --wiredTigerCacheSizeGB 1.5`
+`docker run --name mongo -e MONGO_INITDB_ROOT_USERNAME=mongoadmin -e MONGO_INITDB_ROOT_PASSWORD=xxxxxx -p 3306:27017 -d mongo --wiredTigerCacheSizeGB 1.5`
 
 ### 创建数据库用户
 `use admin`
