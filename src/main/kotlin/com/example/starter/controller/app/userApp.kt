@@ -1,5 +1,6 @@
 package com.example.starter.controller.app
 
+import com.example.starter.constant.UserAPI
 import com.example.starter.service.UserService
 import com.example.starter.util.JWT
 import com.example.starter.util.coroutineHandler
@@ -24,8 +25,8 @@ suspend fun userApp(vertx: Vertx, schemaParser: SchemaParser): Router {
       val user = ctx.user().principal()
 
       val message = jsonObjectOf(
-        "ACTION" to "PROFILE",
-        "DATA" to user
+        "ACTION" to UserAPI.Profile,
+        "PARAMS" to user
       )
 
       val result = vertx.eventBus().request<JsonObject>(UserService::class.java.name, message).await().body()

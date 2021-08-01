@@ -1,7 +1,7 @@
 package com.example.starter.controller.app
 
+import com.example.starter.constant.CateAPI
 import com.example.starter.service.CateService
-import com.example.starter.service.UserService
 import com.example.starter.util.coroutineHandler
 import com.example.starter.util.jsonWithExceptionHandle
 import io.vertx.core.Vertx
@@ -19,8 +19,8 @@ suspend fun cateApp(vertx: Vertx, schemaParser: SchemaParser): Router {
     .produces("application/json")
     .coroutineHandler { ctx ->
       val message = jsonObjectOf(
-        "ACTION" to "ALL",
-        "DATA" to null
+        "ACTION" to CateAPI.ALL,
+        "PARAMS" to null
       )
 
       val result = vertx.eventBus().request<JsonObject>(CateService::class.java.name, message).await().body()

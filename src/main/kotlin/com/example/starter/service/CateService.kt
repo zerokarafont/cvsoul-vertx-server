@@ -1,5 +1,6 @@
 package com.example.starter.service
 
+import com.example.starter.constant.CateAPI
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.mongo.MongoClient
 import io.vertx.kotlin.core.json.jsonObjectOf
@@ -12,10 +13,10 @@ class CateService(private val client: MongoClient): CoroutineVerticle() {
   override suspend fun start() {
     vertx.eventBus().consumer<JsonObject>(this::class.java.name) { message ->
       val action = message.body().getString("ACTION")
-      val data = message.body().getJsonObject("DATA")
+      val params = message.body().getJsonObject("PARAMS")
 
       when(action) {
-        "ALL" -> launch { message.reply(all()) }
+        CateAPI.ALL.name -> launch { message.reply(all()) }
       }
     }
   }

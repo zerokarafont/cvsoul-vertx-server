@@ -1,5 +1,6 @@
 package com.example.starter.controller.common
 
+import com.example.starter.constant.AuthAPI
 import com.example.starter.service.AuthService
 import com.example.starter.util.coroutineHandler
 import com.example.starter.util.decryptKeyDirectOrFromCache
@@ -48,8 +49,8 @@ suspend fun auth(vertx: Vertx, schemaParser: SchemaParser): Router {
       val appKey = ctx.request().headers().get("appKey")
 
       val message = jsonObjectOf(
-        "ACTION" to "REGISTER",
-        "DATA" to body,
+        "ACTION" to AuthAPI.REGISTER,
+        "BODY" to body,
         "SESSION_ID" to sessionId,
         "APP_KEY" to appKey
       )
@@ -83,8 +84,8 @@ suspend fun auth(vertx: Vertx, schemaParser: SchemaParser): Router {
       val appKey = ctx.request().headers().get("appKey")
 
       val message = jsonObjectOf(
-        "ACTION" to "LOGIN",
-        "DATA" to body,
+        "ACTION" to AuthAPI.LOGIN,
+        "BODY" to body,
         "SESSION_ID" to sessionId,
         "APP_KEY" to appKey
       )

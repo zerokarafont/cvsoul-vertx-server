@@ -1,5 +1,6 @@
 package com.example.starter.service
 
+import com.example.starter.constant.AuthAPI
 import com.example.starter.util.*
 import com.soywiz.krypto.MD5
 import io.vertx.core.CompositeFuture
@@ -16,13 +17,13 @@ class AuthService(private val client: MongoClient) : CoroutineVerticle() {
   override suspend fun start() {
     vertx.eventBus().consumer<JsonObject>(this::class.java.name).handler { message ->
       val action = message.body().getString("ACTION")
-      val data = message.body().getJsonObject("DATA")
+      val body = message.body().getJsonObject("BODY")
       val sessionId = message.body().getString("SESSION_ID")
       val appKey = message.body().getString("APP_KEY")
 
       when(action) {
-        "LOGIN" -> launch { message.reply(login(data, sessionId, appKey)) }
-        "REGISTER" -> launch { message.reply(register(data, sessionId, appKey)) }
+        AuthAPI.LOGIN.name -> launch { message.reply(login(body, sessionId, appKey)) }
+        AuthAPI.REGISTER.name -> launch { message.reply(register(body, sessionId, appKey)) }
       }
     }
   }
