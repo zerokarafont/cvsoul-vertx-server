@@ -36,6 +36,7 @@ suspend fun quoteApp(vertx: Vertx, schemaParser: SchemaParser): Router {
         .build()
     ).coroutineHandler { ctx ->
       val params = ctx.get<RequestParameters>(ValidationHandler.REQUEST_CONTEXT_KEY)
+      println("params: $params")
       val page = params.queryParameter("page").integer
       val pageSize = params.queryParameter("pageSize").integer
       val cateId = params.queryParameter("cateId")?.string

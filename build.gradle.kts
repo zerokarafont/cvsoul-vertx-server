@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin ("jvm") version "1.5.10"
+  kotlin("plugin.serialization") version "1.5.20"
   application
   id("com.github.johnrengelman.shadow") version "7.0.0"
 }
@@ -40,6 +41,8 @@ dependencies {
   implementation("io.vertx:vertx-lang-kotlin")
   implementation("org.apache.logging.log4j:log4j-slf4j18-impl:2.14.1")
   implementation("com.soywiz.korlibs.krypto:krypto-jvm:2.2.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.2.2")
 
   implementation(kotlin("stdlib-jdk8"))
   testImplementation("io.vertx:vertx-junit5")
