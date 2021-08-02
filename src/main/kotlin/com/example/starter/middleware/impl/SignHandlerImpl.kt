@@ -26,12 +26,13 @@ class SignHandlerImpl(private val vertx: Vertx, private val config: JsonObject):
   override fun handle(ctx: RoutingContext) {
     val paramsMap = ctx.queryParams()
 
-    var params = ""
+    var params = emptyList<String>()
     for (pair in paramsMap) {
       val key = pair.key
       val value = pair.value
-      params += "$key=$value"
+      params = params.plus("$key=$value")
     }
+    val paramsUrlFormat = params.joinToString("&")
 
     val body = ctx.bodyAsString
     val method = ctx.request().method()
@@ -74,7 +75,7 @@ class SignHandlerImpl(private val vertx: Vertx, private val config: JsonObject):
       // 验证签名
       var compareSign = ""
       if (method == HttpMethod.GET) {
-        compareSign = MD5.digest("$params + $timestamp + $nonce + $rawBase64Key + $specCode".toByteArray(Charset.forName("UTF-8"))).hexUpper
+        compareSign = MD5.digest("$paramsUrlFormat + $timestamp + $nonce + $rawBase64Key + $specCode".toByteArray(Charset.forName("UTF-8"))).hexUpper
       }else if (method == HttpMethod.POST) {
         compareSign = MD5.digest("$body + $timestamp + $nonce + $rawBase64Key + $specCode".toByteArray(Charset.forName("UTF-8"))).hexUpper
       }
