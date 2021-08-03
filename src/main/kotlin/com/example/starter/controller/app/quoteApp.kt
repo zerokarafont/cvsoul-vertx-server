@@ -36,11 +36,14 @@ suspend fun quoteApp(vertx: Vertx, schemaParser: SchemaParser): Router {
         .build()
     ).coroutineHandler { ctx ->
       val params = ctx.get<RequestParameters>(ValidationHandler.REQUEST_CONTEXT_KEY)
-      println("params: $params")
+
       val page = params.queryParameter("page").integer
       val pageSize = params.queryParameter("pageSize").integer
       val cateId = params.queryParameter("cateId")?.string
       val title = params.queryParameter("title")?.string
+
+      val sessionId = ctx.request().headers().get("sessionId")
+      val appKey = ctx.request().headers().get("appKey")
 
       val message = jsonObjectOf(
         "ACTION" to QuoteAPI.FETCH_QUOTE_ALBUM_PAGINATION_LIST,
@@ -49,7 +52,9 @@ suspend fun quoteApp(vertx: Vertx, schemaParser: SchemaParser): Router {
           "pageSize" to pageSize,
           "cateId" to cateId,
           "title" to title
-        )
+        ),
+        "SESSION_ID" to sessionId,
+        "APP_KEY" to appKey
       )
 
       val result = vertx.eventBus().request<JsonObject>(QuoteService::class.java.name, message).await().body()

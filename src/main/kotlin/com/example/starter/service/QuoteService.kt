@@ -2,6 +2,7 @@ package com.example.starter.service
 
 import com.example.starter.constant.CollectionSchema
 import com.example.starter.constant.QuoteAPI
+import com.example.starter.schema.PaginationSchema
 import com.example.starter.schema.QuoteAlbumSchema
 import com.example.starter.util.decryptKeyDirectOrFromCache
 import com.example.starter.util.encryptData
@@ -14,7 +15,6 @@ import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.protobuf.ProtoBuf
 
 class QuoteService(private val client: MongoClient): CoroutineVerticle() {
 
@@ -67,9 +67,11 @@ class QuoteService(private val client: MongoClient): CoroutineVerticle() {
       "skip" to page - 1
     ))
 
-    val resp = client.findWithOptions(CollectionSchema.QUOTE_ALBUM.name, query, options).await()
+    @Suppress("UNCHECKED_CAST")
+    val resp = client.findWithOptions(CollectionSchema.QUOTE_ALBUM.name, query, options).await() as List<QuoteAlbumSchema?>
     val key = decryptKeyDirectOrFromCache(vertx, sessionId, appKey, config)
-    val data = encryptData(Json.encodeToString(resp), key)
+    val paginationResp = PaginationSchema(page, pageSize, resp)
+    val data = encryptData(Json.encodeToString(paginationResp), key)
 
     return jsonObjectOf(
       "statusCode" to 200,
