@@ -6,6 +6,7 @@ import com.example.starter.schema.PaginationSchema
 import com.example.starter.schema.QuoteAlbumSchema
 import com.example.starter.util.decryptKeyDirectOrFromCache
 import com.example.starter.util.encryptData
+import com.example.starter.util.responseOk
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.mongo.FindOptions
 import io.vertx.ext.mongo.MongoClient
@@ -73,11 +74,7 @@ class QuoteService(private val client: MongoClient): CoroutineVerticle() {
     val paginationResp = PaginationSchema(page, pageSize, resp)
     val data = encryptData(Json.encodeToString(paginationResp), key)
 
-    return jsonObjectOf(
-      "statusCode" to 200,
-      "msg" to "ok",
-      "data" to data
-    )
+    return responseOk(data = data)
 
   }
 }

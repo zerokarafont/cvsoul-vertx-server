@@ -1,6 +1,7 @@
 package com.example.starter.service
 
 import com.example.starter.constant.CateAPI
+import com.example.starter.util.responseOk
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.mongo.MongoClient
 import io.vertx.kotlin.core.json.jsonObjectOf
@@ -23,10 +24,6 @@ class CateService(private val client: MongoClient): CoroutineVerticle() {
 
   private suspend fun all(): Any {
     val resp = client.find("cate", jsonObjectOf()).await()
-    return jsonObjectOf(
-      "statusCode" to 200,
-      "msg" to "ok",
-      "data" to resp
-    )
+    return responseOk(data = resp)
   }
 }

@@ -117,3 +117,29 @@ fun CSTTimestamp(): Long {
 //  calendar.set(Calendar.HOUR, Calendar.HOUR + 8)
 //  return calendar.timeInMillis / 1000
 }
+
+/**
+ * 成功响应
+ * @param msg 信息
+ * @param data 数据
+ */
+fun responseOk(msg: String? = "ok", data: Any? = null): JsonObject {
+  return jsonObjectOf(
+    "statusCode" to 200,
+    "msg" to msg,
+    "data" to data
+  )
+}
+
+/**
+ * 业务异常响应
+ * @param msg 信息
+ * @param data 数据
+ */
+fun responseException(msg: String, data: Any? = null): JsonObject {
+  return jsonObjectOf(
+    "statusCode" to 400,
+    "msg" to msg,
+    "data" to data
+  )
+}

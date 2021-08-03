@@ -1,6 +1,8 @@
 package com.example.starter.service
 
 import com.example.starter.constant.UserAPI
+import com.example.starter.util.responseException
+import com.example.starter.util.responseOk
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.mongo.MongoClient
 import io.vertx.kotlin.core.json.jsonObjectOf
@@ -32,17 +34,9 @@ class UserService(private val client: MongoClient): CoroutineVerticle() {
     )).await()
 
     if (userInfo == null) {
-      return jsonObjectOf(
-        "statusCode" to 400,
-        "msg" to "未查询到用户信息",
-        "data" to null
-      )
+      return responseException(msg = "未查询到用户信息")
     }
 
-    return jsonObjectOf(
-      "statusCode" to 200,
-      "msg" to "ok",
-      "data" to userInfo
-    )
+    return responseOk(data = userInfo)
   }
 }

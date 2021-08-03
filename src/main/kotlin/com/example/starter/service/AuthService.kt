@@ -35,10 +35,7 @@ class AuthService(private val client: MongoClient) : CoroutineVerticle() {
     val code = data.getString("code")
 
     if (encryptPass != encryptConfirmPass) {
-      return jsonObjectOf(
-        "statusCode" to 400,
-        "msg" to "输入密码不一致"
-      )
+      return responseException(msg = "输入密码不一致")
     }
 
     val resp = CompositeFuture.all(
@@ -57,18 +54,12 @@ class AuthService(private val client: MongoClient) : CoroutineVerticle() {
 
     val userObj = resp[0]
     if (userObj != null) {
-      return jsonObjectOf(
-        "statusCode" to 400,
-        "msg" to "用户名已存在"
-      )
+      return responseException(msg = "用户名已存在")
     }
 
     val codeObj = resp[1]
     if (codeObj == null) {
-      return jsonObjectOf(
-        "statusCode" to 400,
-        "msg" to "无效邀请码"
-      )
+      return responseException(msg = "无效邀请码")
     }
 
     // 标志邀请码已使用
@@ -91,11 +82,7 @@ class AuthService(private val client: MongoClient) : CoroutineVerticle() {
       "createTime" to CSTTimestamp()
     )).await()
 
-    return jsonObjectOf(
-      "statusCode" to 200,
-      "msg" to "注册成功",
-      "data" to null
-    )
+    return responseOk(msg = "注册成功")
   }
 
   private suspend fun login(data: JsonObject, sessionId: String, appKey: String): Any {
@@ -109,10 +96,7 @@ class AuthService(private val client: MongoClient) : CoroutineVerticle() {
     )).await()
 
     if (user == null) {
-      return jsonObjectOf(
-        "statusCode" to 400,
-        "msg" to "用户名不存在"
-      )
+      return responseException(msg = "用户名不存在")
     }
 
     // 解出明文密码
@@ -141,10 +125,6 @@ class AuthService(private val client: MongoClient) : CoroutineVerticle() {
     val token = jwt!!.generateToken(jsonObjectOf("sub" to username))
     val encryptToken = encryptData(token, key)
 
-    return jsonObjectOf(
-      "statusCode" to 200,
-      "msg" to "登录成功",
-      "data" to encryptToken
-    )
+    return responseOk(msg = "登录成功", data = encryptToken)
   }
 }
