@@ -43,7 +43,7 @@ class QuoteService(private val client: MongoClient): CoroutineVerticle() {
     val query = jsonObjectOf()
 
     if (title != null && title.isNotEmpty()) {
-      query.put("title",Regex.escape("/$title/"))
+      query.put("title", jsonObjectOf("\$regex" to title))
     }
     if (cateId != null && cateId.isNotEmpty()) {
       query.put("cateId", cateId)
