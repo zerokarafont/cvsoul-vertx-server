@@ -2,20 +2,18 @@ package com.example.starter.service
 
 import com.example.starter.constant.CollectionSchema
 import com.example.starter.constant.QuoteAPI
-import com.example.starter.schema.PaginationSchema
-import com.example.starter.schema.QuoteAlbumSchema
 import com.example.starter.util.decryptKeyDirectOrFromCache
 import com.example.starter.util.encryptData
 import com.example.starter.util.responseOk
+import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.mongo.FindOptions
 import io.vertx.ext.mongo.MongoClient
 import io.vertx.kotlin.core.json.jsonObjectOf
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 class QuoteService(private val client: MongoClient): CoroutineVerticle() {
 
@@ -65,14 +63,18 @@ class QuoteService(private val client: MongoClient): CoroutineVerticle() {
       "fields" to fields,
       "sort" to sort,
       "limit" to pageSize,
-      "skip" to page - 1
+      "skip" to (page - 1) * pageSize
     ))
 
-    @Suppress("UNCHECKED_CAST")
-    val resp = client.findWithOptions(CollectionSchema.QUOTE_ALBUM.name, query, options).await() as List<QuoteAlbumSchema?>
+    val resp = client.findWithOptions(CollectionSchema.QUOTE_ALBUM.name.lowercase(), query, options).await()
+    val paginationResp = jsonObjectOf(
+      "page" to page,
+      "pageSize" to pageSize,
+      "data" to resp
+    )
+    val json = Json.encode(paginationResp)
     val key = decryptKeyDirectOrFromCache(vertx, sessionId, appKey, config)
-    val paginationResp = PaginationSchema(page, pageSize, resp)
-    val data = encryptData(Json.encodeToString(paginationResp), key)
+    val data = encryptData(json, key)
 
     return responseOk(data = data)
 

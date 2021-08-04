@@ -20,4 +20,4 @@ open class CommonSchema {
  * @param data List<T>
  */
 @Serializable
-data class PaginationSchema<T>(val page: Int, val pageSize: Int, val data: List<T>)
+data class PaginationSchema<T>(val page: Int, val pageSize: Int, val data: T)
