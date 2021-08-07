@@ -24,7 +24,7 @@ enum class CollectionSchema(value: String) {
   /**
    * 标签集合
    */
-  TAGS("tags"),
+  TAG("tag"),
 
   /**
    * 音频集合
