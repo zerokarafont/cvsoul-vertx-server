@@ -39,6 +39,13 @@ class SignHandlerImpl(private val vertx: Vertx, private val config: JsonObject):
 
     val headers = ctx.request().headers()
 
+    val admin = headers.get("admin")
+    // 如果请求头中包含admin=true 不做签名校验 直接放行
+    if (admin == "true") {
+      ctx.next()
+      return
+    }
+
     val sign = headers.get("sign")
     val nonce = headers.get("nonce")
     val appKey = headers.get("appKey")

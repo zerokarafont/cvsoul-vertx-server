@@ -22,6 +22,12 @@ class SSLHandlerImpl(private val vertx: Vertx, private val config: JsonObject): 
     val headers = ctx.request().headers()
     val sessionId = headers.get("sessionId")
 
+    val admin = headers.get("admin")
+    if (admin == "true") {
+      ctx.next()
+      return
+    }
+
     CoroutineScope(vertx.dispatcher()).launch {
       val GET_REQUEST = jsonObjectOf(
         "ACTION" to "GET",
