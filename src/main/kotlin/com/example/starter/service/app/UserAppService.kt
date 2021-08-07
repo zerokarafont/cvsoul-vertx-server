@@ -1,4 +1,4 @@
-package com.example.starter.service
+package com.example.starter.service.app
 
 import com.example.starter.constant.UserAPI
 import com.example.starter.util.responseException
@@ -10,7 +10,7 @@ import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.launch
 
-class UserService(private val client: MongoClient): CoroutineVerticle() {
+class UserAppService(private val client: MongoClient): CoroutineVerticle() {
 
   override suspend fun start() {
     vertx.eventBus().consumer<JsonObject>(this::class.java.name) { message ->

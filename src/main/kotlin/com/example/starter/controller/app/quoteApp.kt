@@ -1,7 +1,7 @@
 package com.example.starter.controller.app
 
 import com.example.starter.constant.QuoteAPI
-import com.example.starter.service.QuoteService
+import com.example.starter.service.app.QuoteAppService
 import com.example.starter.util.coroutineHandler
 import com.example.starter.util.jsonWithExceptionHandle
 import io.vertx.core.Vertx
@@ -57,7 +57,7 @@ suspend fun quoteApp(vertx: Vertx, schemaParser: SchemaParser): Router {
         "APP_KEY" to appKey
       )
 
-      val result = vertx.eventBus().request<JsonObject>(QuoteService::class.java.name, message).await().body()
+      val result = vertx.eventBus().request<JsonObject>(QuoteAppService::class.java.name, message).await().body()
       ctx.jsonWithExceptionHandle(result)
     }
 

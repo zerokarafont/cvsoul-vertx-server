@@ -1,7 +1,6 @@
-package com.example.starter.service
+package com.example.starter.service.app
 
-import com.example.starter.constant.CollectionSchema
-import com.example.starter.constant.TagAPI
+import com.example.starter.constant.CateAPI
 import com.example.starter.util.responseOk
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.mongo.MongoClient
@@ -10,7 +9,7 @@ import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.launch
 
-class TagService(private val client: MongoClient): CoroutineVerticle() {
+class CateAppService(private val client: MongoClient): CoroutineVerticle() {
 
   override suspend fun start() {
     vertx.eventBus().consumer<JsonObject>(this::class.java.name) { message ->
@@ -18,13 +17,13 @@ class TagService(private val client: MongoClient): CoroutineVerticle() {
       val params = message.body().getJsonObject("PARAMS")
 
       when(action) {
-        TagAPI.ALL.name -> launch { message.reply(all()) }
+        CateAPI.ALL.name -> launch { message.reply(all()) }
       }
     }
   }
 
   private suspend fun all(): Any {
-    val resp = client.find(CollectionSchema.TAG.name.lowercase(), jsonObjectOf()).await()
+    val resp = client.find("cate", jsonObjectOf()).await()
     return responseOk(data = resp)
   }
 }

@@ -1,4 +1,4 @@
-package com.example.starter.service
+package com.example.starter.service.common
 
 import com.example.starter.constant.AuthAPI
 import com.example.starter.constant.CollectionSchema
@@ -11,7 +11,6 @@ import io.vertx.kotlin.core.json.jsonObjectOf
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.launch
-import java.util.*
 
 class AuthService(private val client: MongoClient) : CoroutineVerticle() {
 

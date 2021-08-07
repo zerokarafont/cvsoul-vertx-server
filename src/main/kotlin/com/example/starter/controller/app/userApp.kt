@@ -1,7 +1,7 @@
 package com.example.starter.controller.app
 
 import com.example.starter.constant.UserAPI
-import com.example.starter.service.UserService
+import com.example.starter.service.app.UserAppService
 import com.example.starter.util.JWT
 import com.example.starter.util.coroutineHandler
 import com.example.starter.util.jsonWithExceptionHandle
@@ -29,7 +29,7 @@ suspend fun userApp(vertx: Vertx, schemaParser: SchemaParser): Router {
         "PARAMS" to user
       )
 
-      val result = vertx.eventBus().request<JsonObject>(UserService::class.java.name, message).await().body()
+      val result = vertx.eventBus().request<JsonObject>(UserAppService::class.java.name, message).await().body()
       ctx.jsonWithExceptionHandle(result)
     }
 

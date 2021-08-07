@@ -1,7 +1,7 @@
 package com.example.starter.controller.app
 
 import com.example.starter.constant.CateAPI
-import com.example.starter.service.CateService
+import com.example.starter.service.app.CateAppService
 import com.example.starter.util.coroutineHandler
 import com.example.starter.util.jsonWithExceptionHandle
 import io.vertx.core.Vertx
@@ -23,7 +23,7 @@ suspend fun cateApp(vertx: Vertx, schemaParser: SchemaParser): Router {
         "PARAMS" to null
       )
 
-      val result = vertx.eventBus().request<JsonObject>(CateService::class.java.name, message).await().body()
+      val result = vertx.eventBus().request<JsonObject>(CateAppService::class.java.name, message).await().body()
       ctx.jsonWithExceptionHandle(result)
     }
 

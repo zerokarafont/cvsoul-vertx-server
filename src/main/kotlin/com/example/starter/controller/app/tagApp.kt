@@ -1,7 +1,7 @@
 package com.example.starter.controller.app
 
 import com.example.starter.constant.TagAPI
-import com.example.starter.service.TagService
+import com.example.starter.service.app.TagAppService
 import com.example.starter.util.coroutineHandler
 import com.example.starter.util.jsonWithExceptionHandle
 import io.vertx.core.Vertx
@@ -23,7 +23,7 @@ suspend fun tagApp(vertx: Vertx, schemaParser: SchemaParser): Router {
         "PARAMS" to null
       )
 
-      val result = vertx.eventBus().request<JsonObject>(TagService::class.java.name, message).await().body()
+      val result = vertx.eventBus().request<JsonObject>(TagAppService::class.java.name, message).await().body()
       ctx.jsonWithExceptionHandle(result)
     }
 

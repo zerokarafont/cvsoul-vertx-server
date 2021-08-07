@@ -1,13 +1,10 @@
 package com.example.starter.controller.common
 
 import com.example.starter.constant.AuthAPI
-import com.example.starter.service.AuthService
+import com.example.starter.service.common.AuthService
 import com.example.starter.util.coroutineHandler
-import com.example.starter.util.decryptKeyDirectOrFromCache
-import com.example.starter.util.encryptData
 import com.example.starter.util.jsonWithExceptionHandle
 import io.vertx.core.Vertx
-import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.validation.RequestParameters
