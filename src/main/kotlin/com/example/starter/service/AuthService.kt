@@ -1,6 +1,7 @@
 package com.example.starter.service
 
 import com.example.starter.constant.AuthAPI
+import com.example.starter.constant.CollectionSchema
 import com.example.starter.util.*
 import com.soywiz.krypto.MD5
 import io.vertx.core.CompositeFuture
@@ -39,12 +40,12 @@ class AuthService(private val client: MongoClient) : CoroutineVerticle() {
     }
 
     val resp = CompositeFuture.all(
-      client.findOne("user", jsonObjectOf(
+      client.findOne(CollectionSchema.USER.name.lowercase(), jsonObjectOf(
         "username" to username
       ), jsonObjectOf(
         "username" to 1
       )),
-      client.findOne("code", jsonObjectOf(
+      client.findOne(CollectionSchema.CODE.name.lowercase(), jsonObjectOf(
         "code" to code,
         "isUsed" to false
       ), jsonObjectOf()))
@@ -63,7 +64,7 @@ class AuthService(private val client: MongoClient) : CoroutineVerticle() {
     }
 
     // 标志邀请码已使用
-    client.updateCollection("code", jsonObjectOf(
+    client.updateCollection(CollectionSchema.CODE.name.lowercase(), jsonObjectOf(
       "code" to code
     ), jsonObjectOf(
       "\$set" to jsonObjectOf("isUsed" to true, "updateTime" to CSTTimestamp())
@@ -76,7 +77,7 @@ class AuthService(private val client: MongoClient) : CoroutineVerticle() {
     val salt = config.getString("SALT")
     val hashPass = MD5.digest("$rawPass$salt".toByteArray()).hexUpper
 
-    client.save("user", jsonObjectOf(
+    client.save(CollectionSchema.USER.name.lowercase(), jsonObjectOf(
       "username" to username,
       "password" to hashPass,
       "createTime" to CSTTimestamp()
@@ -89,7 +90,7 @@ class AuthService(private val client: MongoClient) : CoroutineVerticle() {
     val username = data.getString("username")
     val encryptPass = data.getString("password")
 
-    val user = client.findOne("user", jsonObjectOf(
+    val user = client.findOne(CollectionSchema.USER.name.lowercase(), jsonObjectOf(
       "username" to username
     ), jsonObjectOf(
       "username" to 1
@@ -106,7 +107,7 @@ class AuthService(private val client: MongoClient) : CoroutineVerticle() {
     // hash后和数据库对比
     val salt = config.getString("SALT")
     val hashPass = MD5.digest("$rawPass$salt".toByteArray()).hexUpper
-    val passInDB = client.findOne("user", jsonObjectOf(
+    val passInDB = client.findOne(CollectionSchema.USER.name.lowercase(), jsonObjectOf(
       "username" to username
     ), jsonObjectOf(
       "password" to 1
