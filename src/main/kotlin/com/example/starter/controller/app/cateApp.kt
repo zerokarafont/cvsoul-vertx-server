@@ -4,6 +4,7 @@ import com.example.starter.constant.CateAPI
 import com.example.starter.service.app.CateAppService
 import com.example.starter.util.coroutineHandler
 import com.example.starter.util.jsonWithExceptionHandle
+import com.example.starter.util.requestEventbusPayload
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
@@ -18,10 +19,7 @@ suspend fun cateApp(vertx: Vertx, schemaParser: SchemaParser): Router {
     .get("/all")
     .produces("application/json")
     .coroutineHandler { ctx ->
-      val message = jsonObjectOf(
-        "ACTION" to CateAPI.ALL,
-        "PARAMS" to null
-      )
+      val message = requestEventbusPayload(action = CateAPI.ALL)
 
       val result = vertx.eventBus().request<JsonObject>(CateAppService::class.java.name, message).await().body()
       ctx.jsonWithExceptionHandle(result)

@@ -1,5 +1,6 @@
 package com.example.starter.schema
 
+import io.vertx.core.json.JsonObject
 import kotlinx.serialization.Serializable
 
 /**
@@ -21,3 +22,19 @@ open class CommonSchema {
  */
 @Serializable
 data class PaginationSchema<T>(val page: Int, val pageSize: Int, val data: T)
+
+/**
+ * 返回响应格式
+ * @param statusCode 状态码
+ * @param msg 信息
+ * @param data 数据
+ */
+@Serializable
+data class ResponseSchema<T>(val statusCode: String, val msg: String, val data: T? = null)
+
+/**
+ * 请求内容格式
+ * @param params GET请求内容
+ * @param body POST请求内容
+ */
+data class RequestSchema(val params: JsonObject, val body: JsonObject)

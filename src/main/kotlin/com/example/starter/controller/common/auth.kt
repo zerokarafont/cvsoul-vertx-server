@@ -3,6 +3,7 @@ package com.example.starter.controller.common
 import com.example.starter.constant.AuthAPI
 import com.example.starter.service.common.AuthService
 import com.example.starter.util.coroutineHandler
+import com.example.starter.util.extractRequestContent
 import com.example.starter.util.jsonWithExceptionHandle
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
@@ -39,8 +40,7 @@ suspend fun auth(vertx: Vertx, schemaParser: SchemaParser): Router {
         .build()
     )
     .coroutineHandler { ctx ->
-      val params = ctx.get<RequestParameters>(ValidationHandler.REQUEST_CONTEXT_KEY)
-      val body = params.body().jsonObject
+      val (params, body) = extractRequestContent(ctx)
 
       val sessionId = ctx.request().headers().get("sessionId")
       val appKey = ctx.request().headers().get("appKey")
@@ -74,8 +74,7 @@ suspend fun auth(vertx: Vertx, schemaParser: SchemaParser): Router {
         )
         .build()
     ).coroutineHandler { ctx ->
-      val params = ctx.get<RequestParameters>(ValidationHandler.REQUEST_CONTEXT_KEY)
-      val body = params.body().jsonObject
+      val (params, body) = extractRequestContent(ctx)
 
       val sessionId = ctx.request().headers().get("sessionId")
       val appKey = ctx.request().headers().get("appKey")

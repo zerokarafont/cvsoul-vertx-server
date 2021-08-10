@@ -5,11 +5,11 @@ import com.example.starter.service.app.UserAppService
 import com.example.starter.util.JWT
 import com.example.starter.util.coroutineHandler
 import com.example.starter.util.jsonWithExceptionHandle
+import com.example.starter.util.requestEventbusPayload
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.json.schema.SchemaParser
-import io.vertx.kotlin.core.json.jsonObjectOf
 import io.vertx.kotlin.coroutines.await
 
 suspend fun userApp(vertx: Vertx, schemaParser: SchemaParser): Router {
@@ -24,10 +24,7 @@ suspend fun userApp(vertx: Vertx, schemaParser: SchemaParser): Router {
     .coroutineHandler { ctx ->
       val user = ctx.user().principal()
 
-      val message = jsonObjectOf(
-        "ACTION" to UserAPI.Profile,
-        "PARAMS" to user
-      )
+      val message = requestEventbusPayload(action = UserAPI.Profile, params = user)
 
       val result = vertx.eventBus().request<JsonObject>(UserAppService::class.java.name, message).await().body()
       ctx.jsonWithExceptionHandle(result)
