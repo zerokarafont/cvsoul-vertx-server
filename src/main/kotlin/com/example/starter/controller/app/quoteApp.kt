@@ -7,6 +7,7 @@ import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.validation.ValidationHandler
+import io.vertx.ext.web.validation.builder.Parameters
 import io.vertx.ext.web.validation.builder.Parameters.optionalParam
 import io.vertx.ext.web.validation.builder.Parameters.param
 import io.vertx.json.schema.SchemaParser
@@ -46,6 +47,37 @@ suspend fun quoteApp(vertx: Vertx, schemaParser: SchemaParser, config: JsonObjec
       val result = vertx.eventBus().request<JsonObject>(QuoteAppService::class.java.name, message).await().body()
       val resp = encryptResponseData(result, vertx, sessionId, appKey, config)
       ctx.jsonWithExceptionHandle(resp)
+    }
+
+  // 获取专辑详情
+  router
+    .get("/playlist/detail")
+    .produces("application/json")
+    .handler {
+//        ValidationHandler
+//          .builder(schemaParser)
+//          .queryParameter(param("_id", stringSchema()))
+//          .build()
+    }
+    .coroutineHandler { ctx ->
+      println("inner")
+      val (params, body) = extractRequestContent(ctx)
+
+//      val sessionId = ctx.request().headers().get("sessionId")
+//      val appKey = ctx.request().headers().get("appKey")
+
+      val message = requestEventbusPayload(
+        action = QuoteAPI.FETCH_QUOTE_ALBUM_PLAYLIST_DETAIL,
+        params = params,
+        body = body
+      )
+
+      println("message send")
+
+      val result = vertx.eventBus().request<JsonObject>(QuoteAppService::class.java.name, message).await().body()
+//      val resp = encryptResponseDat|a(result, vertx, sessionId, appKey, config)
+      println("result get")
+      ctx.jsonWithExceptionHandle(result)
     }
 
   return router

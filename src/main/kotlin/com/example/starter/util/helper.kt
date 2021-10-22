@@ -1,6 +1,5 @@
 package com.example.starter.util
 
-import com.example.starter.constant.QuoteAPI
 import com.example.starter.schema.RequestSchema
 import com.example.starter.verticle.SSLVerticle
 import com.soywiz.krypto.AES
@@ -20,18 +19,22 @@ import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.util.*
 
 fun Route.coroutineHandler(requestHandler: suspend (RoutingContext) -> Unit) {
+  println("here1")
   handler { ctx ->
+    println("here2")
     CoroutineScope(ctx.vertx().dispatcher()).launch {
       try {
+        println("here3")
         requestHandler(ctx)
       }catch (e: Throwable) {
+        println("e:$e")
         ctx.fail(400, e)
       }
     }.invokeOnCompletion {
+      println("here4")
       it?.run { ctx.fail(it) }
     }
   }
@@ -190,7 +193,7 @@ fun responseException(msg: String, data: Any? = null): JsonObject {
 }
 
 /**
- * 事件总想请求负载格式
+ * 事件总线请求负载格式
  * @param action API接口名
  * @param params GET请求参数
  * @param body   POST请求参数

@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * 语录集合
+ * @param cateId 所属分类
  * @param userId 所属创建用户
  * @param isOpen 是否开放
  * @param cover 封面
@@ -13,6 +14,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class QuoteAlbumSchema(
+  val cateId: String,
   val userId: String,
   val isOpen: Boolean,
   val cover: String,

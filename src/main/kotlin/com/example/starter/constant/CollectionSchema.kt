@@ -40,4 +40,9 @@ enum class CollectionSchema(value: String) {
    * 语录音频-多对多关系集合
    */
   QUOTE_ALBUM_N_TO_N_VOICE("quote_album_N_to_N_voice"),
+
+  /**
+   * 聊天室集合
+   */
+  CHATROOM("chatroom"),
 }

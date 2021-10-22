@@ -12,6 +12,7 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.impl.headers.HeadersMultiMap
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.RoutingContext
+import io.vertx.ext.web.handler.HttpException
 import io.vertx.kotlin.core.json.jsonObjectOf
 import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.dispatcher
@@ -25,7 +26,6 @@ import java.nio.charset.Charset
 class SignHandlerImpl(private val vertx: Vertx, private val config: JsonObject): SignHandler {
   override fun handle(ctx: RoutingContext) {
     val paramsMap = ctx.queryParams()
-
     var params = emptyList<String>()
     for (pair in paramsMap) {
       val key = pair.key
@@ -36,12 +36,18 @@ class SignHandlerImpl(private val vertx: Vertx, private val config: JsonObject):
 
     val body = ctx.bodyAsString
     val method = ctx.request().method()
-
     val headers = ctx.request().headers()
 
     val admin = headers.get("admin")
     // 如果请求头中包含admin=true 不做签名校验 直接放行
     if (admin == "true") {
+      ctx.next()
+      return
+    }
+
+    val ignore = headers.get("ignore")
+    // 如果请求头中包含ignore=true 不做签名校验 直接放行
+    if (ignore == "true") {
       ctx.next()
       return
     }
@@ -52,17 +58,19 @@ class SignHandlerImpl(private val vertx: Vertx, private val config: JsonObject):
     val timestamp = headers.get("timestamp")
     val sessionId = headers.get("sessionId")
 
-    if (sign.isEmpty() || nonce.isEmpty() || appKey.isEmpty() || timestamp.isEmpty()) {
-      ctx.fail(400, Exception("签名错误"))
+    if (sign.isNullOrEmpty() || nonce.isNullOrEmpty() || appKey.isNullOrEmpty() || timestamp.isNullOrEmpty()) {
+      ctx.fail(HttpException(400 ,"签名错误"))
       return
     }
 
     CoroutineScope(vertx.dispatcher()).launch {
+      println("sign start")
       // 拿到原始的aes密钥
       val privateKey = config.getString("PRIVATE_KEY")
       val specCode = config.getString("SPEC_CODE")
       val rawBase64Key = if (sessionId.isNullOrEmpty()) {
         RSA.decryptMessage(Base64.decode(appKey), privateKey)
+        println("raw")
       } else {
         // 如果sessionId不为空, 说明会话未过期, 直接从redis中获取key, 跳过RSA解密
         val GET_REQUEST = jsonObjectOf(
@@ -71,6 +79,7 @@ class SignHandlerImpl(private val vertx: Vertx, private val config: JsonObject):
         )
 
         val key: String? = vertx.eventBus().request<JsonObject>(SSLVerticle::class.java.name, GET_REQUEST).await().body().getString("key")
+        println("key: $key, sessionId: $sessionId")
         if (key.isNullOrEmpty()) {
             // 如果在请求的过程中, sessionId缓存提前失效或不存在, 则使用RSA解密
           RSA.decryptMessage(Base64.decode(appKey), privateKey)
@@ -87,7 +96,7 @@ class SignHandlerImpl(private val vertx: Vertx, private val config: JsonObject):
         compareSign = MD5.digest("$body + $timestamp + $nonce + $rawBase64Key + $specCode".toByteArray(Charset.forName("UTF-8"))).hexUpper
       }
       if (compareSign != sign) {
-        ctx.fail(400, Exception("签名错误"))
+        ctx.fail(HttpException(400 ,"签名错误"))
         return@launch
       }
 
@@ -96,7 +105,7 @@ class SignHandlerImpl(private val vertx: Vertx, private val config: JsonObject):
       val currentTimestamp = System.currentTimeMillis()
       val compareTimestamp = timestamp.toLong()
       if (currentTimestamp - compareTimestamp > config.getLong("NONCE_MIN_EXPIRED_UNIT_SEC")*1000) {
-        ctx.fail(400, Exception("请求过期"))
+        ctx.fail(HttpException(400 ,"请求过期"))
         return@launch
       }
 
@@ -108,7 +117,7 @@ class SignHandlerImpl(private val vertx: Vertx, private val config: JsonObject):
       val isExist = vertx.eventBus().request<JsonObject>(NonceVerticle::class.java.name, GET_REQUEST).await().body().getBoolean("isExist")
 
       if (isExist) {
-        ctx.fail(400, Exception("请求无效"))
+        ctx.fail(HttpException(400 ,"请求无效"))
       } else {
         val SET_REQUEST = jsonObjectOf(
           "ACTION" to "SET",
@@ -117,7 +126,7 @@ class SignHandlerImpl(private val vertx: Vertx, private val config: JsonObject):
         vertx.eventBus().send(NonceVerticle::class.java.name, SET_REQUEST)
         ctx.next()
       }
-
     }
+    println("sign over")
   }
 }

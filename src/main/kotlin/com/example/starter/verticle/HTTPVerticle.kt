@@ -1,9 +1,6 @@
 package com.example.starter.verticle
 
-import com.example.starter.controller.app.cateApp
-import com.example.starter.controller.app.quoteApp
-import com.example.starter.controller.app.tagApp
-import com.example.starter.controller.app.userApp
+import com.example.starter.controller.app.*
 import com.example.starter.controller.common.auth
 import com.example.starter.middleware.SSLHandler
 import com.example.starter.middleware.SignHandler
@@ -80,7 +77,9 @@ class HTTPVerticle : CoroutineVerticle() {
     router.mountSubRouter("/app/user", userApp(vertx, schemaParser))
     router.mountSubRouter("/app/cate", cateApp(vertx, schemaParser))
     router.mountSubRouter("/app/tag", tagApp(vertx, schemaParser))
-    router.mountSubRouter("/app/quote", quoteApp(vertx, schemaParser))
+    router.mountSubRouter("/app/quote", quoteApp(vertx, schemaParser, config))
+    router.mountSubRouter("/app/voice", voiceApp(vertx, schemaParser, config))
+    router.mountSubRouter("/app/chatroom", chatroomApp(vertx, schemaParser, config))
 
     try {
       vertx
